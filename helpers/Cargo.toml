@@ -1,0 +1,29 @@
+[package]
+name = "helpers"
+description = "Helpers functions, traits and structs to fetch and deserialize stuff"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+
+[dependencies]
+cynic = { version = "3.10.0", features = ["http-surf"] }
+surf = "2.3.2"
+subxt = "0.41.0"
+
+anyhow.workspace = true
+serde_json.workspace = true
+url.workspace = true
+hex.workspace = true
+sp-core.workspace = true
+log.workspace = true
+
+async-trait.workspace = true
+
+[build-dependencies]
+cynic-codegen = "3.10.0"
+
+[dev-dependencies]
+insta = "1.43.1"

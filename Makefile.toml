@@ -1,0 +1,65 @@
+[config]
+default_to_workspace = false
+
+[tasks.ignore-members]
+workspace = false
+
+[tasks.check-fmt]
+command = "cargo"
+args = ["fmt", "--check"]
+
+[tasks.fmt]
+command = "cargo"
+args = ["fmt"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+
+[tasks.test]
+command = "cargo"
+args = ["test"]
+
+[tasks.clippy]
+command = "cargo"
+args = ["clippy", "--", "--deny", "warnings"]
+
+[tasks.audit]
+command = "cargo"
+args = ["audit"]
+
+[tasks.coverage]
+description = "Runs coverage with llvm-cov"
+run_task = "cov"
+
+[tasks.cov]
+description = "Runs coverage with llvm-cov"
+command = "cargo"
+args = ["llvm-cov", "--workspace", "--lcov", "--output-path", "lcov.info"]
+
+[tasks.bench]
+description = "Runs benchmark"
+dependencies = ["test"]
+command = "cargo"
+args = ["bench"]
+
+[tasks.add-header]
+script = { file = "./scripts/add_header_if_missed.sh" }
+args = ["HEADER-APACHE2", "./!(target)/**/*.rs"]
+
+[tasks.check-header]
+env = { CHECK_DIRTY = "true" }
+run_task = "add-header"
+
+[tasks.machete]
+command = "cargo"
+args = ["machete"]
+
+[tasks.ci-common]
+dependencies = ["build", "test", "clippy", "machete"]
+
+[tasks.ci-remote]
+dependencies = ["check-fmt", "check-header", "ci-common"]
+
+[tasks.ci]
+dependencies = ["fmt", "add-header", "ci-common"]

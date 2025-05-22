@@ -1,0 +1,1301 @@
+"""
+The root query type which gives access points into the data universe.
+"""
+type Query {
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+  """
+  Reads and enables pagination through a set of `Extrinsic`.
+  """
+  extrinsics(
+    """
+    Only read the first `n` values of the set.
+    """
+    first: Int
+    """
+    Only read the last `n` values of the set.
+    """
+    last: Int
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+    """
+    Read all values in the set before (above) this cursor.
+    """
+    before: Cursor
+    """
+    Read all values in the set after (below) this cursor.
+    """
+    after: Cursor
+    """
+    The method to use when ordering `Extrinsic`.
+    """
+    orderBy: [ExtrinsicsOrderBy!] = [PRIMARY_KEY_ASC]
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExtrinsicCondition
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExtrinsicFilter
+  ): ExtrinsicsConnection
+  """
+  Reads and enables pagination through a set of `Migration`.
+  """
+  migrations(
+    """
+    Only read the first `n` values of the set.
+    """
+    first: Int
+    """
+    Only read the last `n` values of the set.
+    """
+    last: Int
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+    """
+    Read all values in the set before (above) this cursor.
+    """
+    before: Cursor
+    """
+    Read all values in the set after (below) this cursor.
+    """
+    after: Cursor
+    """
+    The method to use when ordering `Migration`.
+    """
+    orderBy: [MigrationsOrderBy!] = [PRIMARY_KEY_ASC]
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MigrationCondition
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MigrationFilter
+  ): MigrationsConnection
+  extrinsic(id: String!): Extrinsic
+  migration(id: Int!): Migration
+  squidStatus: _ProcessorStatus!
+}
+
+"""
+A connection to a list of `Extrinsic` values.
+"""
+type ExtrinsicsConnection {
+  """
+  A list of `Extrinsic` objects.
+  """
+  nodes: [Extrinsic]!
+  """
+  A list of edges which contains the `Extrinsic` and cursor to aid in pagination.
+  """
+  edges: [ExtrinsicsEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  The count of *all* `Extrinsic` you could get from the connection.
+  """
+  totalCount: Int!
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: ExtrinsicAggregates
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `Extrinsic` for these aggregates.
+    """
+    groupBy: [ExtrinsicGroupBy!]!
+    """
+    Conditions on the grouped aggregates.
+    """
+    having: ExtrinsicHavingInput
+  ): [ExtrinsicAggregates!]
+}
+
+type Extrinsic {
+  id: String!
+  blockNumber: Int!
+  pallet: String
+  call: String
+  success: Boolean!
+  timestamp: Datetime!
+  extrinsicIdx: Int!
+  address: String
+  hash: String!
+}
+
+"""
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
+"""
+scalar Datetime
+
+"""
+A `Extrinsic` edge in the connection.
+"""
+type ExtrinsicsEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor
+  """
+  The `Extrinsic` at the end of the edge.
+  """
+  node: Extrinsic
+}
+
+"""
+A location in a connection that can be used for resuming pagination.
+"""
+scalar Cursor
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: Cursor
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: Cursor
+}
+
+type ExtrinsicAggregates {
+  keys: [String!]
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: ExtrinsicSumAggregates
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: ExtrinsicDistinctCountAggregates
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: ExtrinsicMinAggregates
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: ExtrinsicMaxAggregates
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: ExtrinsicAverageAggregates
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: ExtrinsicStddevSampleAggregates
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: ExtrinsicStddevPopulationAggregates
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: ExtrinsicVarianceSampleAggregates
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: ExtrinsicVariancePopulationAggregates
+}
+
+type ExtrinsicSumAggregates {
+  """
+  Sum of blockNumber across the matching connection
+  """
+  blockNumber: BigInt!
+  """
+  Sum of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: BigInt!
+}
+
+"""
+A signed eight-byte integer. The upper big integer values are greater than the
+max value for a JavaScript number. Therefore all big integers will be output as
+strings and not numbers.
+"""
+scalar BigInt
+
+type ExtrinsicDistinctCountAggregates {
+  """
+  Distinct count of id across the matching connection
+  """
+  id: BigInt
+  """
+  Distinct count of blockNumber across the matching connection
+  """
+  blockNumber: BigInt
+  """
+  Distinct count of pallet across the matching connection
+  """
+  pallet: BigInt
+  """
+  Distinct count of call across the matching connection
+  """
+  call: BigInt
+  """
+  Distinct count of success across the matching connection
+  """
+  success: BigInt
+  """
+  Distinct count of timestamp across the matching connection
+  """
+  timestamp: BigInt
+  """
+  Distinct count of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: BigInt
+  """
+  Distinct count of address across the matching connection
+  """
+  address: BigInt
+  """
+  Distinct count of hash across the matching connection
+  """
+  hash: BigInt
+}
+
+type ExtrinsicMinAggregates {
+  """
+  Minimum of blockNumber across the matching connection
+  """
+  blockNumber: Int
+  """
+  Minimum of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: Int
+}
+
+type ExtrinsicMaxAggregates {
+  """
+  Maximum of blockNumber across the matching connection
+  """
+  blockNumber: Int
+  """
+  Maximum of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: Int
+}
+
+type ExtrinsicAverageAggregates {
+  """
+  Mean average of blockNumber across the matching connection
+  """
+  blockNumber: BigFloat
+  """
+  Mean average of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: BigFloat
+}
+
+"""
+A floating point number that requires more precision than IEEE 754 binary 64
+"""
+scalar BigFloat
+
+type ExtrinsicStddevSampleAggregates {
+  """
+  Sample standard deviation of blockNumber across the matching connection
+  """
+  blockNumber: BigFloat
+  """
+  Sample standard deviation of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: BigFloat
+}
+
+type ExtrinsicStddevPopulationAggregates {
+  """
+  Population standard deviation of blockNumber across the matching connection
+  """
+  blockNumber: BigFloat
+  """
+  Population standard deviation of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: BigFloat
+}
+
+type ExtrinsicVarianceSampleAggregates {
+  """
+  Sample variance of blockNumber across the matching connection
+  """
+  blockNumber: BigFloat
+  """
+  Sample variance of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: BigFloat
+}
+
+type ExtrinsicVariancePopulationAggregates {
+  """
+  Population variance of blockNumber across the matching connection
+  """
+  blockNumber: BigFloat
+  """
+  Population variance of extrinsicIdx across the matching connection
+  """
+  extrinsicIdx: BigFloat
+}
+
+"""
+Grouping methods for `Extrinsic` for usage during aggregation.
+"""
+enum ExtrinsicGroupBy {
+  BLOCK_NUMBER
+  PALLET
+  CALL
+  SUCCESS
+  TIMESTAMP
+  TIMESTAMP_TRUNCATED_TO_HOUR
+  TIMESTAMP_TRUNCATED_TO_DAY
+  EXTRINSIC_IDX
+  ADDRESS
+  HASH
+}
+
+"""
+Conditions for `Extrinsic` aggregates.
+"""
+input ExtrinsicHavingInput {
+  AND: [ExtrinsicHavingInput!]
+  OR: [ExtrinsicHavingInput!]
+  sum: ExtrinsicHavingSumInput
+  distinctCount: ExtrinsicHavingDistinctCountInput
+  min: ExtrinsicHavingMinInput
+  max: ExtrinsicHavingMaxInput
+  average: ExtrinsicHavingAverageInput
+  stddevSample: ExtrinsicHavingStddevSampleInput
+  stddevPopulation: ExtrinsicHavingStddevPopulationInput
+  varianceSample: ExtrinsicHavingVarianceSampleInput
+  variancePopulation: ExtrinsicHavingVariancePopulationInput
+}
+
+input ExtrinsicHavingSumInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input HavingIntFilter {
+  equalTo: Int
+  notEqualTo: Int
+  greaterThan: Int
+  greaterThanOrEqualTo: Int
+  lessThan: Int
+  lessThanOrEqualTo: Int
+}
+
+input HavingDatetimeFilter {
+  equalTo: Datetime
+  notEqualTo: Datetime
+  greaterThan: Datetime
+  greaterThanOrEqualTo: Datetime
+  lessThan: Datetime
+  lessThanOrEqualTo: Datetime
+}
+
+input ExtrinsicHavingDistinctCountInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input ExtrinsicHavingMinInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input ExtrinsicHavingMaxInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input ExtrinsicHavingAverageInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input ExtrinsicHavingStddevSampleInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input ExtrinsicHavingStddevPopulationInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input ExtrinsicHavingVarianceSampleInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+input ExtrinsicHavingVariancePopulationInput {
+  blockNumber: HavingIntFilter
+  timestamp: HavingDatetimeFilter
+  extrinsicIdx: HavingIntFilter
+}
+
+"""
+Methods to use when ordering `Extrinsic`.
+"""
+enum ExtrinsicsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  BLOCK_NUMBER_ASC
+  BLOCK_NUMBER_DESC
+  PALLET_ASC
+  PALLET_DESC
+  CALL_ASC
+  CALL_DESC
+  SUCCESS_ASC
+  SUCCESS_DESC
+  TIMESTAMP_ASC
+  TIMESTAMP_DESC
+  EXTRINSIC_IDX_ASC
+  EXTRINSIC_IDX_DESC
+  ADDRESS_ASC
+  ADDRESS_DESC
+  HASH_ASC
+  HASH_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `Extrinsic` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input ExtrinsicCondition {
+  """
+  Checks for equality with the object’s `id` field.
+  """
+  id: String
+  """
+  Checks for equality with the object’s `blockNumber` field.
+  """
+  blockNumber: Int
+  """
+  Checks for equality with the object’s `pallet` field.
+  """
+  pallet: String
+  """
+  Checks for equality with the object’s `call` field.
+  """
+  call: String
+  """
+  Checks for equality with the object’s `success` field.
+  """
+  success: Boolean
+  """
+  Checks for equality with the object’s `timestamp` field.
+  """
+  timestamp: Datetime
+  """
+  Checks for equality with the object’s `extrinsicIdx` field.
+  """
+  extrinsicIdx: Int
+  """
+  Checks for equality with the object’s `address` field.
+  """
+  address: String
+  """
+  Checks for equality with the object’s `hash` field.
+  """
+  hash: String
+}
+
+"""
+A filter to be used against `Extrinsic` object types. All fields are combined with a logical ‘and.’
+"""
+input ExtrinsicFilter {
+  """
+  Filter by the object’s `id` field.
+  """
+  id: StringFilter
+  """
+  Filter by the object’s `blockNumber` field.
+  """
+  blockNumber: IntFilter
+  """
+  Filter by the object’s `pallet` field.
+  """
+  pallet: StringFilter
+  """
+  Filter by the object’s `call` field.
+  """
+  call: StringFilter
+  """
+  Filter by the object’s `success` field.
+  """
+  success: BooleanFilter
+  """
+  Filter by the object’s `timestamp` field.
+  """
+  timestamp: DatetimeFilter
+  """
+  Filter by the object’s `extrinsicIdx` field.
+  """
+  extrinsicIdx: IntFilter
+  """
+  Filter by the object’s `address` field.
+  """
+  address: StringFilter
+  """
+  Filter by the object’s `hash` field.
+  """
+  hash: StringFilter
+  """
+  Checks for all expressions in this list.
+  """
+  and: [ExtrinsicFilter!]
+  """
+  Checks for any expressions in this list.
+  """
+  or: [ExtrinsicFilter!]
+  """
+  Negates the expression.
+  """
+  not: ExtrinsicFilter
+}
+
+"""
+A filter to be used against String fields. All fields are combined with a logical ‘and.’
+"""
+input StringFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+  """
+  Equal to the specified value.
+  """
+  equalTo: String
+  """
+  Not equal to the specified value.
+  """
+  notEqualTo: String
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: String
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
+  notDistinctFrom: String
+  """
+  Included in the specified list.
+  """
+  in: [String!]
+  """
+  Not included in the specified list.
+  """
+  notIn: [String!]
+  """
+  Less than the specified value.
+  """
+  lessThan: String
+  """
+  Less than or equal to the specified value.
+  """
+  lessThanOrEqualTo: String
+  """
+  Greater than the specified value.
+  """
+  greaterThan: String
+  """
+  Greater than or equal to the specified value.
+  """
+  greaterThanOrEqualTo: String
+  """
+  Contains the specified string (case-sensitive).
+  """
+  includes: String
+  """
+  Does not contain the specified string (case-sensitive).
+  """
+  notIncludes: String
+  """
+  Contains the specified string (case-insensitive).
+  """
+  includesInsensitive: String
+  """
+  Does not contain the specified string (case-insensitive).
+  """
+  notIncludesInsensitive: String
+  """
+  Starts with the specified string (case-sensitive).
+  """
+  startsWith: String
+  """
+  Does not start with the specified string (case-sensitive).
+  """
+  notStartsWith: String
+  """
+  Starts with the specified string (case-insensitive).
+  """
+  startsWithInsensitive: String
+  """
+  Does not start with the specified string (case-insensitive).
+  """
+  notStartsWithInsensitive: String
+  """
+  Ends with the specified string (case-sensitive).
+  """
+  endsWith: String
+  """
+  Does not end with the specified string (case-sensitive).
+  """
+  notEndsWith: String
+  """
+  Ends with the specified string (case-insensitive).
+  """
+  endsWithInsensitive: String
+  """
+  Does not end with the specified string (case-insensitive).
+  """
+  notEndsWithInsensitive: String
+  """
+  Matches the specified pattern (case-sensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  like: String
+  """
+  Does not match the specified pattern (case-sensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  notLike: String
+  """
+  Matches the specified pattern (case-insensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  likeInsensitive: String
+  """
+  Does not match the specified pattern (case-insensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  notLikeInsensitive: String
+  """
+  Equal to the specified value (case-insensitive).
+  """
+  equalToInsensitive: String
+  """
+  Not equal to the specified value (case-insensitive).
+  """
+  notEqualToInsensitive: String
+  """
+  Not equal to the specified value, treating null like an ordinary value (case-insensitive).
+  """
+  distinctFromInsensitive: String
+  """
+  Equal to the specified value, treating null like an ordinary value (case-insensitive).
+  """
+  notDistinctFromInsensitive: String
+  """
+  Included in the specified list (case-insensitive).
+  """
+  inInsensitive: [String!]
+  """
+  Not included in the specified list (case-insensitive).
+  """
+  notInInsensitive: [String!]
+  """
+  Less than the specified value (case-insensitive).
+  """
+  lessThanInsensitive: String
+  """
+  Less than or equal to the specified value (case-insensitive).
+  """
+  lessThanOrEqualToInsensitive: String
+  """
+  Greater than the specified value (case-insensitive).
+  """
+  greaterThanInsensitive: String
+  """
+  Greater than or equal to the specified value (case-insensitive).
+  """
+  greaterThanOrEqualToInsensitive: String
+}
+
+"""
+A filter to be used against Int fields. All fields are combined with a logical ‘and.’
+"""
+input IntFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+  """
+  Equal to the specified value.
+  """
+  equalTo: Int
+  """
+  Not equal to the specified value.
+  """
+  notEqualTo: Int
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Int
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
+  notDistinctFrom: Int
+  """
+  Included in the specified list.
+  """
+  in: [Int!]
+  """
+  Not included in the specified list.
+  """
+  notIn: [Int!]
+  """
+  Less than the specified value.
+  """
+  lessThan: Int
+  """
+  Less than or equal to the specified value.
+  """
+  lessThanOrEqualTo: Int
+  """
+  Greater than the specified value.
+  """
+  greaterThan: Int
+  """
+  Greater than or equal to the specified value.
+  """
+  greaterThanOrEqualTo: Int
+}
+
+"""
+A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’
+"""
+input BooleanFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+  """
+  Equal to the specified value.
+  """
+  equalTo: Boolean
+  """
+  Not equal to the specified value.
+  """
+  notEqualTo: Boolean
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Boolean
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
+  notDistinctFrom: Boolean
+  """
+  Included in the specified list.
+  """
+  in: [Boolean!]
+  """
+  Not included in the specified list.
+  """
+  notIn: [Boolean!]
+  """
+  Less than the specified value.
+  """
+  lessThan: Boolean
+  """
+  Less than or equal to the specified value.
+  """
+  lessThanOrEqualTo: Boolean
+  """
+  Greater than the specified value.
+  """
+  greaterThan: Boolean
+  """
+  Greater than or equal to the specified value.
+  """
+  greaterThanOrEqualTo: Boolean
+}
+
+"""
+A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’
+"""
+input DatetimeFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+  """
+  Equal to the specified value.
+  """
+  equalTo: Datetime
+  """
+  Not equal to the specified value.
+  """
+  notEqualTo: Datetime
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Datetime
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
+  notDistinctFrom: Datetime
+  """
+  Included in the specified list.
+  """
+  in: [Datetime!]
+  """
+  Not included in the specified list.
+  """
+  notIn: [Datetime!]
+  """
+  Less than the specified value.
+  """
+  lessThan: Datetime
+  """
+  Less than or equal to the specified value.
+  """
+  lessThanOrEqualTo: Datetime
+  """
+  Greater than the specified value.
+  """
+  greaterThan: Datetime
+  """
+  Greater than or equal to the specified value.
+  """
+  greaterThanOrEqualTo: Datetime
+}
+
+"""
+A connection to a list of `Migration` values.
+"""
+type MigrationsConnection {
+  """
+  A list of `Migration` objects.
+  """
+  nodes: [Migration]!
+  """
+  A list of edges which contains the `Migration` and cursor to aid in pagination.
+  """
+  edges: [MigrationsEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  The count of *all* `Migration` you could get from the connection.
+  """
+  totalCount: Int!
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: MigrationAggregates
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `Migration` for these aggregates.
+    """
+    groupBy: [MigrationsGroupBy!]!
+    """
+    Conditions on the grouped aggregates.
+    """
+    having: MigrationsHavingInput
+  ): [MigrationAggregates!]
+}
+
+type Migration {
+  id: Int!
+  timestamp: BigInt!
+  name: String!
+}
+
+"""
+A `Migration` edge in the connection.
+"""
+type MigrationsEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor
+  """
+  The `Migration` at the end of the edge.
+  """
+  node: Migration
+}
+
+type MigrationAggregates {
+  keys: [String!]
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: MigrationSumAggregates
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: MigrationDistinctCountAggregates
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: MigrationMinAggregates
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: MigrationMaxAggregates
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: MigrationAverageAggregates
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: MigrationStddevSampleAggregates
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: MigrationStddevPopulationAggregates
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: MigrationVarianceSampleAggregates
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: MigrationVariancePopulationAggregates
+}
+
+type MigrationSumAggregates {
+  """
+  Sum of id across the matching connection
+  """
+  id: BigInt!
+  """
+  Sum of timestamp across the matching connection
+  """
+  timestamp: BigFloat!
+}
+
+type MigrationDistinctCountAggregates {
+  """
+  Distinct count of id across the matching connection
+  """
+  id: BigInt
+  """
+  Distinct count of timestamp across the matching connection
+  """
+  timestamp: BigInt
+  """
+  Distinct count of name across the matching connection
+  """
+  name: BigInt
+}
+
+type MigrationMinAggregates {
+  """
+  Minimum of id across the matching connection
+  """
+  id: Int
+  """
+  Minimum of timestamp across the matching connection
+  """
+  timestamp: BigInt
+}
+
+type MigrationMaxAggregates {
+  """
+  Maximum of id across the matching connection
+  """
+  id: Int
+  """
+  Maximum of timestamp across the matching connection
+  """
+  timestamp: BigInt
+}
+
+type MigrationAverageAggregates {
+  """
+  Mean average of id across the matching connection
+  """
+  id: BigFloat
+  """
+  Mean average of timestamp across the matching connection
+  """
+  timestamp: BigFloat
+}
+
+type MigrationStddevSampleAggregates {
+  """
+  Sample standard deviation of id across the matching connection
+  """
+  id: BigFloat
+  """
+  Sample standard deviation of timestamp across the matching connection
+  """
+  timestamp: BigFloat
+}
+
+type MigrationStddevPopulationAggregates {
+  """
+  Population standard deviation of id across the matching connection
+  """
+  id: BigFloat
+  """
+  Population standard deviation of timestamp across the matching connection
+  """
+  timestamp: BigFloat
+}
+
+type MigrationVarianceSampleAggregates {
+  """
+  Sample variance of id across the matching connection
+  """
+  id: BigFloat
+  """
+  Sample variance of timestamp across the matching connection
+  """
+  timestamp: BigFloat
+}
+
+type MigrationVariancePopulationAggregates {
+  """
+  Population variance of id across the matching connection
+  """
+  id: BigFloat
+  """
+  Population variance of timestamp across the matching connection
+  """
+  timestamp: BigFloat
+}
+
+"""
+Grouping methods for `Migration` for usage during aggregation.
+"""
+enum MigrationsGroupBy {
+  TIMESTAMP
+  NAME
+}
+
+"""
+Conditions for `Migration` aggregates.
+"""
+input MigrationsHavingInput {
+  AND: [MigrationsHavingInput!]
+  OR: [MigrationsHavingInput!]
+  sum: MigrationsHavingSumInput
+  distinctCount: MigrationsHavingDistinctCountInput
+  min: MigrationsHavingMinInput
+  max: MigrationsHavingMaxInput
+  average: MigrationsHavingAverageInput
+  stddevSample: MigrationsHavingStddevSampleInput
+  stddevPopulation: MigrationsHavingStddevPopulationInput
+  varianceSample: MigrationsHavingVarianceSampleInput
+  variancePopulation: MigrationsHavingVariancePopulationInput
+}
+
+input MigrationsHavingSumInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input HavingBigintFilter {
+  equalTo: BigInt
+  notEqualTo: BigInt
+  greaterThan: BigInt
+  greaterThanOrEqualTo: BigInt
+  lessThan: BigInt
+  lessThanOrEqualTo: BigInt
+}
+
+input MigrationsHavingDistinctCountInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input MigrationsHavingMinInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input MigrationsHavingMaxInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input MigrationsHavingAverageInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input MigrationsHavingStddevSampleInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input MigrationsHavingStddevPopulationInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input MigrationsHavingVarianceSampleInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+input MigrationsHavingVariancePopulationInput {
+  id: HavingIntFilter
+  timestamp: HavingBigintFilter
+}
+
+"""
+Methods to use when ordering `Migration`.
+"""
+enum MigrationsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  TIMESTAMP_ASC
+  TIMESTAMP_DESC
+  NAME_ASC
+  NAME_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `Migration` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input MigrationCondition {
+  """
+  Checks for equality with the object’s `id` field.
+  """
+  id: Int
+  """
+  Checks for equality with the object’s `timestamp` field.
+  """
+  timestamp: BigInt
+  """
+  Checks for equality with the object’s `name` field.
+  """
+  name: String
+}
+
+"""
+A filter to be used against `Migration` object types. All fields are combined with a logical ‘and.’
+"""
+input MigrationFilter {
+  """
+  Filter by the object’s `id` field.
+  """
+  id: IntFilter
+  """
+  Filter by the object’s `timestamp` field.
+  """
+  timestamp: BigIntFilter
+  """
+  Filter by the object’s `name` field.
+  """
+  name: StringFilter
+  """
+  Checks for all expressions in this list.
+  """
+  and: [MigrationFilter!]
+  """
+  Checks for any expressions in this list.
+  """
+  or: [MigrationFilter!]
+  """
+  Negates the expression.
+  """
+  not: MigrationFilter
+}
+
+"""
+A filter to be used against BigInt fields. All fields are combined with a logical ‘and.’
+"""
+input BigIntFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+  """
+  Equal to the specified value.
+  """
+  equalTo: BigInt
+  """
+  Not equal to the specified value.
+  """
+  notEqualTo: BigInt
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: BigInt
+  """
+  Equal to the specified value, treating null like an ordinary value.
+  """
+  notDistinctFrom: BigInt
+  """
+  Included in the specified list.
+  """
+  in: [BigInt!]
+  """
+  Not included in the specified list.
+  """
+  notIn: [BigInt!]
+  """
+  Less than the specified value.
+  """
+  lessThan: BigInt
+  """
+  Less than or equal to the specified value.
+  """
+  lessThanOrEqualTo: BigInt
+  """
+  Greater than the specified value.
+  """
+  greaterThan: BigInt
+  """
+  Greater than or equal to the specified value.
+  """
+  greaterThanOrEqualTo: BigInt
+}
+
+type _ProcessorStatus {
+  name: String!
+  height: Int!
+  hash: String!
+}
+

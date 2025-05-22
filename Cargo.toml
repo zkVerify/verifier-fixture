@@ -1,0 +1,23 @@
+[workspace]
+resolver = "3"
+members = ["build-filter-example", "helpers", "verifier-fixture"]
+
+[workspace.package]
+authors = ["Horizen Labs <admin@horizenlabs.io>"]
+edition = "2024"
+repository = "https://github.com/zkVerify/zkVerify"
+homepage = "https://horizenlabs.io"
+license = "Apache-2.0"
+
+[workspace.dependencies]
+anyhow = "1.0.98"
+serde_json = "1.0.140"
+url = "2.5.4"
+pallet-ultraplonk-verifier = { git = "https://github.com/zkVerify/zkVerify.git", tag = "0.9.1-0.14.0" }
+hp-verifiers = { git = "https://github.com/zkVerify/zkVerify.git", tag = "0.9.1-0.14.0" }
+hex = "0.4.3"
+tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }
+sp-core = "36.1.0"
+log = "0.4.27"
+serde = { version = "1.0.219", features = ["derive"] }
+async-trait = "0.1.88"

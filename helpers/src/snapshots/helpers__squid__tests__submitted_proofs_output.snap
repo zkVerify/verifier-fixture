@@ -1,0 +1,14 @@
+---
+source: helpers/src/lib.rs
+expression: operation.query
+---
+query SubmittedProofs($greaterThanOrEqualTo: Int, $lessThanOrEqualTo: Int, $pallet: String!) {
+  extrinsics(condition: {call: "submit_proof", pallet: $pallet}, filter: {blockNumber: {greaterThanOrEqualTo: $greaterThanOrEqualTo, lessThanOrEqualTo: $lessThanOrEqualTo}}, orderBy: [BLOCK_NUMBER_ASC]) {
+    edges {
+      node {
+        extrinsicIdx
+        blockNumber
+      }
+    }
+  }
+}
