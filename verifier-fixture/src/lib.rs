@@ -23,6 +23,8 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 
+const SEED: &[u8; 32] = b"___zkverify_bloom_filter_seed___";
+
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Serialize, Deserialize)]
 pub enum Response {
     Ok,
@@ -294,7 +296,10 @@ impl<T: Hash, R: AsRef<T>> TryFrom<HashMap<Response, Vec<R>>> for Filters<T> {
             data: value
                 .iter()
                 .map(|(response, params)| {
-                    Ok((*response, Bloom::new_for_fp_rate(params.len(), 0.001)?))
+                    Ok((
+                        *response,
+                        Bloom::new_for_fp_rate_with_seed(params.len(), 0.001, SEED)?,
+                    ))
                 })
                 .collect::<Result<_, _>>()
                 .map_err(FilterError::InitFilters)?,
@@ -326,6 +331,7 @@ impl<T: Hash, R: AsRef<T>> TryFrom<HashMap<Response, Vec<R>>> for Filters<T> {
 mod tests {
     use super::*;
     use rand::Rng;
+    use rand::SeedableRng;
     use rand_distr::Distribution;
     use rand_distr::weighted::WeightedIndex;
     use std::sync::LazyLock;
@@ -347,7 +353,7 @@ mod tests {
         }
     }
 
-    fn generate_set_of_proof_results(size: usize) -> Vec<(ProofData, Response)> {
+    fn generate_set_of_proof_results(size: usize, seed: Option<u64>) -> Vec<(ProofData, Response)> {
         let choices = [
             (Response::Ok, 0.99),
             (Response::Error(VerifyError::InvalidVerificationKey), 0.004),
@@ -356,7 +362,8 @@ mod tests {
             (Response::Error(VerifyError::InvalidProofData), 0.001),
         ];
         let distribution = WeightedIndex::new(choices.iter().map(|item| item.1)).unwrap();
-        let mut rng = rand::rng();
+        let seed = seed.unwrap_or_else(|| rand::rng().random());
+        let mut rng = rand_chacha::ChaCha12Rng::seed_from_u64(seed);
         (0..size)
             .map(|_| {
                 (
@@ -369,7 +376,7 @@ mod tests {
 
     #[test]
     fn crate_a_filter_from_iterator_of_proof_results() {
-        let results = generate_set_of_proof_results(1000000);
+        let results = generate_set_of_proof_results(1000000, None);
 
         let filter = Filters::<ProofData>::try_from(Box::new(results.clone().into_iter())
             as Box<dyn Iterator<Item = (ProofData, Response)>>)
@@ -383,7 +390,7 @@ mod tests {
 
     #[test]
     fn serialize_deserialize() {
-        let results = generate_set_of_proof_results(10000);
+        let results = generate_set_of_proof_results(10000, None);
 
         let filter = Filters::<ProofData>::try_from(Box::new(results.clone().into_iter())
             as Box<dyn Iterator<Item = (ProofData, Response)>>)
@@ -401,7 +408,7 @@ mod tests {
 
     #[test]
     fn serialized_size() {
-        let results = generate_set_of_proof_results(1000000);
+        let results = generate_set_of_proof_results(1000000, None);
 
         let filter = Filters::<ProofData>::try_from(Box::new(results.clone().into_iter())
             as Box<dyn Iterator<Item = (ProofData, Response)>>)
@@ -410,6 +417,49 @@ mod tests {
         let serialized = filter.serialize().unwrap();
 
         assert!((serialized.len()) < 2000000); // The serialized filter should be significantly smaller than the original one
+    }
+
+    #[test]
+    fn some_exceptions() {
+        let results = generate_set_of_proof_results(1000000, Some(42));
+
+        let filter = Filters::<ProofData>::try_from(Box::new(results.clone().into_iter())
+            as Box<dyn Iterator<Item = (ProofData, Response)>>)
+        .unwrap();
+
+        assert_eq!(25, filter.exceptions.len());
+    }
+
+    #[test]
+    fn exception_is_present_in_both_filters_and_maps() {
+        let results = generate_set_of_proof_results(1000000, Some(42));
+
+        let filter = Filters::<ProofData>::try_from(Box::new(results.clone().into_iter())
+            as Box<dyn Iterator<Item = (ProofData, Response)>>)
+        .unwrap();
+
+        let collision = ProofData {
+            inner: 32838783664015801697706217650880773446,
+        };
+
+        assert_eq!(Some(Response::Ok), filter.response_filter(&collision));
+        assert_eq!(
+            Some(&Response::Error(VerifyError::InvalidInput)),
+            filter.exception(&collision)
+        );
+
+        let collision = ProofData {
+            inner: 41402599530130110469595099825496588210,
+        };
+
+        assert_eq!(
+            Some(Response::Error(VerifyError::InvalidProofData)),
+            filter.response_filter(&collision)
+        );
+        assert_eq!(
+            Some(&Response::Error(VerifyError::InvalidVerificationKey)),
+            filter.exception(&collision)
+        );
     }
 
     #[test]

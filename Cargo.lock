@@ -1097,7 +1097,6 @@ version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f6d7f06817e48ea4e17532fa61bc4e8b9a101437f0623f69d2ea54284f3a817"
 dependencies = [
- "getrandom 0.2.16",
  "siphasher",
 ]
 
@@ -2668,10 +2667,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "335ff9f135e4384c8150d6f27c6daed433577f86b4750418338c01a1a2528592"
 dependencies = [
  "cfg-if",
- "js-sys",
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
- "wasm-bindgen",
 ]
 
 [[package]]
@@ -7315,6 +7312,7 @@ dependencies = [
  "enum-iterator",
  "hp-verifiers",
  "rand 0.9.1",
+ "rand_chacha 0.9.0",
  "rand_distr",
  "serde",
  "thiserror 2.0.12",
