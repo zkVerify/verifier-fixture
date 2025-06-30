@@ -104,7 +104,7 @@ async fn main() -> anyhow::Result<()> {
 
     for (id, p) in proofs.into_iter().enumerate() {
         if id > last_announced + proofs_tot / 20 {
-            log::info!("Computed {}/{} proofs", id, proofs_tot);
+            log::info!("Computed {id}/{proofs_tot} proofs");
             last_announced = id;
         }
         let ProofInfo {
@@ -113,7 +113,7 @@ async fn main() -> anyhow::Result<()> {
         } = p;
         if let Some(params) = verify_params(&vk_resolver, proof_data) {
             if response_set.contains(&params) {
-                log::debug!("Duplicate proof at {}", extrinsic_index);
+                log::debug!("Duplicate proof at {extrinsic_index}");
                 continue;
             }
             let result: Response = ultraplonk::verify_proof(&params);
@@ -131,7 +131,7 @@ async fn main() -> anyhow::Result<()> {
         exceptions,
     } = filters.stats();
     for (response, size) in filtered {
-        log::info!("Response: {:?} size: {}", response, size);
+        log::info!("Response: {response:?} size: {size}");
     }
     log::info!("Exceptions size: {exceptions}");
 
